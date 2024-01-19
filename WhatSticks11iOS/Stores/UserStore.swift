@@ -364,7 +364,7 @@ extension UserStore{
             completion(.failure(UserStoreError.failedDecode))
         }
         
-        completion(.success(self.arryDashboardTableObjects ?? [DashboardTableObject]()))
+        completion(.success(self.arryDashboardTableObjects))
         
     }
     

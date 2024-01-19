@@ -482,7 +482,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WS11iOS_v07/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "What Sticks 11";
+				INFOPLIST_KEY_CFBundleDisplayName = "What Sticks";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Allow What Sticks to collect Health Data for analysis.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow What Sticks to collect Health Data for analysis.";
@@ -518,7 +518,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WS11iOS_v07/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "What Sticks 11";
+				INFOPLIST_KEY_CFBundleDisplayName = "What Sticks";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Allow What Sticks to collect Health Data for analysis.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow What Sticks to collect Health Data for analysis.";

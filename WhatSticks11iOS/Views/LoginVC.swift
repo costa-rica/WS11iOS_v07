@@ -237,15 +237,27 @@ class LoginVC: TemplateVC {
                 self.userStore.user.password = self.txtPassword.text
                 self.userStore.user.username = user_obj.username
                 self.userStore.user.timezone = user_obj.timezone
-                self.token = user_obj.token!
+                self.requestStore.token = user_obj.token!
                 if let unwrap_oura_token = user_obj.oura_token{
                     self.userStore.user.oura_token = unwrap_oura_token
                 }
-                self.requestStore.token = user_obj.token!
+                
+                // Sentry event info only for production
+                if self.requestStore.urlStore.apiBase == .prod{
+                    let event = Event(level: .info)
+                    event.message = SentryMessage(formatted: "User logged in")
+                    if let unwp_username = user_obj.username,
+                       let uwwp_user_id = user_obj.id {
+                        event.extra = ["username": unwp_username, "user_id": uwwp_user_id]
+                    }
+                    SentrySDK.capture(event: event)
+                }
+                self.token = user_obj.token!// <-- last because action follows this assignment via didSet()
+                
             case let .failure(error):
                 
                 
-                self.templateAlert(alertTitle: "\(error)", alertMessage: "Did you register? \n ¯\\_(ツ)_/¯ ")
+                self.templateAlert(alertTitle: "\(error)", alertMessage: "Did you register?")
                 }
             }
         }

@@ -72,20 +72,20 @@ class ManageAppleHealthVC: TemplateVC {
 extension ManageAppleHealthVC{
     @objc func actionGetStepsData() {
 
-        let calendar = Calendar.current
-        // Strip off time components from both dates
-        let selectedDate = calendar.startOfDay(for: datePicker.date)
-        let currentDate = calendar.startOfDay(for: Date())
-        // Check if selectedDate is today or in the future
-        if selectedDate >= currentDate {
-            self.templateAlert(alertMessage: "You must pick a day in the past.")
-            return
-        }
-        
         if swtchAllHistoryIsOn {
             dtUserHistory = nil
         } else {
             dtUserHistory = datePicker.date
+            
+            let calendar = Calendar.current
+            // Strip off time components from both dates
+            let selectedDate = calendar.startOfDay(for: datePicker.date)
+            let currentDate = calendar.startOfDay(for: Date())
+            // Check if selectedDate is today or in the future
+            if selectedDate >= currentDate {
+                self.templateAlert(alertMessage: "You must pick a day in the past.")
+                return
+            }
         }
         self.showSpinner()
         self.appleHealthDataFetcher.fetchStepsAndOtherQuantityType(quantityTypeIdentifier: .stepCount, startDate: self.dtUserHistory) { fetcherResult in
@@ -95,10 +95,7 @@ extension ManageAppleHealthVC{
                 self.arryStepsDict = arryStepsDict
                 let formatted_arryStepsDictCount = formatWithCommas(number: arryStepsDict.count)
                 self.spinnerScreenLblMessage(message: "Retrieved \(formatted_arryStepsDictCount) Steps records")
-//                if arryStepsDict.count == 0 {
-//                    self.templateAlert(alertMessage: "There are no STEPS data in your Apple Health Data")
-//                    self.removeSpinner()
-//                }
+
             case let .failure(error):
                 self.templateAlert(alertTitle: "Alert", alertMessage: "This app will not function correctly without steps data. Go to Settings > Health > Data Access & Devices > WhatSticks11iOS to grant access")
                 print("There was an error getting steps: \(error)")
@@ -116,10 +113,7 @@ extension ManageAppleHealthVC{
                 if let unwp_message = self.lblMessage.text {
                     self.lblMessage.text = unwp_message + "," + "\n \(formatted_arrySleepDictCount) Sleep records"
                 }
-//                if arrySleepDict.count == 0 {
-//                    self.templateAlert(alertMessage: "There are no SLEEP data in your Apple Health Data.")
-//                    self.removeSpinner()
-//                }
+
             case let .failure(error):
                 self.templateAlert(alertTitle: "Alert", alertMessage: "This app will not function correctly without sleep data. Go to Settings > Health > Data Access & Devices > WhatSticks11iOS to grant access")
                 print("There was an error getting sleep: \(error)")
