@@ -1,0 +1,14 @@
+{
+  "images" : [
+    {
+      "filename" : "wsLogo1024_blackBackground_noAlpha.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
