@@ -7,6 +7,7 @@
 
 import Foundation
 import HealthKit
+import Sentry
 
 enum HealthDataFetcherError: Error {
     case invalidQuantityType
@@ -46,8 +47,6 @@ class AppleHealthDataFetcher {
     }
 
     
-    
-    
     func fetchStepsAndOtherQuantityType(quantityTypeIdentifier: HKQuantityTypeIdentifier, startDate: Date? = nil, completion: @escaping (Result<[AppleHealthQuantityCategory], Error>) -> Void) {
 //        print("- accessed fetchStepsAndOtherQuantityType, fetching \(quantityTypeIdentifier.rawValue) ")
         
@@ -55,7 +54,10 @@ class AppleHealthDataFetcher {
         // Assuming endDate is the current date
         let endDate = Date()
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: quantityTypeIdentifier) else {
-            print("Invalid quantity type")
+            let event = Event(level: .info)
+            event.message = SentryMessage(formatted: "QuantityType (\(quantityTypeIdentifier)) type not available ---> Expected when user did not allow for \(quantityTypeIdentifier) data")
+            event.extra = [ "quantityTypeIdentifier":quantityTypeIdentifier]
+            SentrySDK.capture(event: event)
             completion(.failure(HealthDataFetcherError.typeNotFound))
             return
         }
@@ -71,6 +73,12 @@ class AppleHealthDataFetcher {
         let query = HKSampleQuery(sampleType: quantityType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
             DispatchQueue.main.async {
                 if let error = error {
+                    
+                    let event = Event(level: .info)
+                    event.message = SentryMessage(formatted: "Error fetching HealthData query: \(error.localizedDescription)")
+                    event.extra = [ "quantityTypeIdentifier":quantityTypeIdentifier]
+                    SentrySDK.capture(event: event)
+
                     print("Error making query: \(error.localizedDescription)")
                     completion(.failure(error))
                     return
@@ -114,7 +122,10 @@ class AppleHealthDataFetcher {
         let endDate = Date()
         
         guard let categoryType = HKObjectType.categoryType(forIdentifier: categoryTypeIdentifier) else {
-            print("CategoryType (sleep) type not available ---> **** Expected when user did not allow for Sleep data ********")
+            let event = Event(level: .info)
+            event.message = SentryMessage(formatted: "CategoryType (sleep) type not available ---> Expected when user did not allow for sleep data")
+            event.extra = [ "categoryTypeIdentifier":categoryTypeIdentifier]
+            SentrySDK.capture(event: event)
             completion(.failure(HealthDataFetcherError.typeNotFound))
             return
         }
@@ -129,7 +140,11 @@ class AppleHealthDataFetcher {
         let query = HKSampleQuery(sampleType: categoryType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    print("Error making query: \(error.localizedDescription)")
+//                    print("Error making query: \(error.localizedDescription)")
+                    let event = Event(level: .info)
+                    event.message = SentryMessage(formatted: "Error fetching HealthData query: \(error.localizedDescription)")
+                    event.extra = [ "categoryTypeIdentifier":categoryTypeIdentifier]
+                    SentrySDK.capture(event: event)
                     completion(.failure(error))
                     return
                 }

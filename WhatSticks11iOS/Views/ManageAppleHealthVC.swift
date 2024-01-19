@@ -26,11 +26,13 @@ class ManageAppleHealthVC: TemplateVC {
     let btnDeleteData = UIButton()
     var arryStepsDict = [AppleHealthQuantityCategory](){
         didSet{
+//            arryStepsDict = [AppleHealthQuantityCategory]()
             actionGetSleepData()
         }
     }
     var arrySleepDict = [AppleHealthQuantityCategory](){
         didSet{
+//            arrySleepDict=[AppleHealthQuantityCategory]()
             actionGetHeartRateData()
         }
     }
@@ -93,7 +95,7 @@ extension ManageAppleHealthVC{
             case let .success(arryStepsDict):
                 print("succesfully collected - arryStepsDict - from healthFetcher class")
                 self.arryStepsDict = arryStepsDict
-                let formatted_arryStepsDictCount = formatWithCommas(number: arryStepsDict.count)
+                let formatted_arryStepsDictCount = formatWithCommas(number: self.arryStepsDict.count)
                 self.spinnerScreenLblMessage(message: "Retrieved \(formatted_arryStepsDictCount) Steps records")
 
             case let .failure(error):
