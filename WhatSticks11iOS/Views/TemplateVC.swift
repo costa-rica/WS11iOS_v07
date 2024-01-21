@@ -33,7 +33,10 @@ class TemplateVC: UIViewController {
     func setupIsDev(urlStore:URLStore){
         if urlStore.apiBase == .dev{
             vwTopSafeBar.backgroundColor = UIColor(named: "yellow-dev")
+        } else{
+            vwTopSafeBar.backgroundColor = UIColor(named: "gray02")
         }
+        
     }
     private func setupViews() {
         // Setup vwTopSafeBar

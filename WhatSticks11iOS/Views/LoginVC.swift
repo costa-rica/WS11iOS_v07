@@ -26,20 +26,19 @@ class LoginVC: TemplateVC {
     var txtPassword = PaddedTextField()
     let btnShowPassword = UIButton()
     var btnLogin=UIButton()
-    
     // Remember me
     var stckVwRememberMe: UIStackView!//accessIdentifier set
     let swRememberMe = UISwitch()
-    
     // Forgot Password
     var signUpLabel:UILabel!
     var btnForgotPassword:UIButton!
-    
     //LoginVC
     let lblScreenNameTitle = UILabel()
-    
     var lblLogout:UILabel!
-//    var boolDashObjExists:Bool!
+    // Remember me
+    var stckVwDevOrProd: UIStackView!//accessIdentifier set
+    let swDevOrProd = UISwitch()
+    var lblDevOrProd = UILabel()
     var token = "token" {
         didSet{
             if token != "token"{
@@ -51,7 +50,7 @@ class LoginVC: TemplateVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.requestStore = RequestStore()
-        self.setupIsDev(urlStore: requestStore.urlStore)
+//        self.setupIsDev(urlStore: requestStore.urlStore)
         self.userStore = UserStore()
         self.userStore.currentDashboardObjPos = 0
         self.userStore.requestStore = self.requestStore
@@ -74,7 +73,7 @@ class LoginVC: TemplateVC {
         if let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.path {
             print("Documents Directory: \(documentsPath)")
         }
-        
+        setup_stckVwDevOrProd()
     }
     override func viewWillAppear(_ animated: Bool) {
         self.isInitialViewController=true
@@ -336,6 +335,7 @@ class LoginVC: TemplateVC {
         stckVwRememberMe.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -bodySidePaddingPercentage)).isActive=true
         
         swRememberMe.isOn = true
+        
     }
     private func setupForgotPasswordButton() {
         btnForgotPassword = UIButton(type: .system)
@@ -378,6 +378,47 @@ class LoginVC: TemplateVC {
     @objc func signUpTapped() {
         performSegue(withIdentifier: "goToRegisterVC", sender: self)
     }
+    
+    
+    func setup_stckVwDevOrProd() {
+        stckVwDevOrProd = UIStackView()
+        
+        
+        lblDevOrProd.text = "Production Server"
+        stckVwDevOrProd.spacing = 10
+        stckVwDevOrProd.addArrangedSubview(lblDevOrProd)
+        stckVwDevOrProd.addArrangedSubview(swDevOrProd)
+        view.addSubview(stckVwDevOrProd)
+        
+        stckVwDevOrProd.translatesAutoresizingMaskIntoConstraints = false
+        lblDevOrProd.translatesAutoresizingMaskIntoConstraints = false
+        swDevOrProd.translatesAutoresizingMaskIntoConstraints = false
+        stckVwDevOrProd.accessibilityIdentifier = "stckVwDevOrProd"
+        lblDevOrProd.accessibilityIdentifier = "lblDevOrProd"
+        swDevOrProd.accessibilityIdentifier = "swRememberMe"
+        swDevOrProd.addTarget(self, action: #selector(switchChanged_swDevOrProd(_:)), for: .valueChanged)
+        
+        stckVwDevOrProd.bottomAnchor.constraint(equalTo: self.vwFooter.topAnchor, constant: heightFromPct(percent: -2)).isActive=true
+        stckVwDevOrProd.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: bodySidePaddingPercentage)).isActive=true
+        stckVwDevOrProd.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -bodySidePaddingPercentage)).isActive=true
+        
+        swDevOrProd.isOn = true
+        self.requestStore.urlStore.apiBase = APIBase.prod
+    }
+    @objc func switchChanged_swDevOrProd(_ sender: UISwitch) {
+        DispatchQueue.main.async {
+            if sender.isOn {
+                self.requestStore.urlStore.apiBase = APIBase.prod
+                self.setupIsDev(urlStore:self.requestStore.urlStore)
+                self.lblDevOrProd.text = "Production Server"
+            } else {
+                self.requestStore.urlStore.apiBase = APIBase.dev
+                self.setupIsDev(urlStore:self.requestStore.urlStore)
+                self.lblDevOrProd.text = "Development Server"
+            }
+        }
+    }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "goToRegisterVC"){
