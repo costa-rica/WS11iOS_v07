@@ -55,7 +55,9 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
                 self.setup_lblDashboardTitle()
                 self.btnDashboardTitleInfo = UIButton(type: .custom)
                 self.setupInformationButton()
-                self.setup_btnTblDashboardOptions()
+                if self.userStore.arryDashboardTableObjects.count >= 2 && self.btnTblDashboardOptions == nil {
+                    self.setup_btnTblDashboardOptions()
+                }
                 self.tblDashboard = UITableView()
                 self.setup_tbl()
                 self.tblDashboard.delegate = self
@@ -145,19 +147,21 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
         
     }
     func setup_btnTblDashboardOptions(){
-        btnTblDashboardOptions = UIButton()
-        guard let btnTblDashboardOptions = btnTblDashboardOptions else {return}
-        view.addSubview(btnTblDashboardOptions)
-        btnTblDashboardOptions.translatesAutoresizingMaskIntoConstraints=false
-        btnTblDashboardOptions.accessibilityIdentifier="btnTblDashboardOptions"
-        btnTblDashboardOptions.addTarget(self, action: #selector(self.touchDown(_:)), for: .touchDown)
-        btnTblDashboardOptions.addTarget(self, action: #selector(touchUpInside_btnTblDashboardOptions(_:)), for: .touchUpInside)
-        // vwFooter button Placement
-        btnTblDashboardOptions.topAnchor.constraint(equalTo: vwFooter.topAnchor, constant: heightFromPct(percent: 2)).isActive=true
-        btnTblDashboardOptions.leadingAnchor.constraint(equalTo: vwFooter.leadingAnchor, constant: widthFromPct(percent: 2)).isActive=true
-        btnTblDashboardOptions.backgroundColor = .systemBlue
-        btnTblDashboardOptions.layer.cornerRadius = 10
-        btnTblDashboardOptions.setTitle(" Dashboards ", for: .normal)
+//        if userStore.arryDashboardTableObjects.count >= 2 {
+            btnTblDashboardOptions = UIButton()
+            guard let btnTblDashboardOptions = btnTblDashboardOptions else {return}
+            view.addSubview(btnTblDashboardOptions)
+            btnTblDashboardOptions.translatesAutoresizingMaskIntoConstraints=false
+            btnTblDashboardOptions.accessibilityIdentifier="btnTblDashboardOptions"
+            btnTblDashboardOptions.addTarget(self, action: #selector(self.touchDown(_:)), for: .touchDown)
+            btnTblDashboardOptions.addTarget(self, action: #selector(touchUpInside_btnTblDashboardOptions(_:)), for: .touchUpInside)
+            // vwFooter button Placement
+            btnTblDashboardOptions.topAnchor.constraint(equalTo: vwFooter.topAnchor, constant: heightFromPct(percent: 2)).isActive=true
+            btnTblDashboardOptions.leadingAnchor.constraint(equalTo: vwFooter.leadingAnchor, constant: widthFromPct(percent: 2)).isActive=true
+            btnTblDashboardOptions.backgroundColor = .systemBlue
+            btnTblDashboardOptions.layer.cornerRadius = 10
+            btnTblDashboardOptions.setTitle(" Dashboards ", for: .normal)
+//        }
     }
     @objc func touchUpInside_btnTblDashboardOptions(_ sender: UIButton) {
         UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
@@ -249,6 +253,11 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
                     self.userStore.writeObjectToJsonFile(object: arryDashboardTableObjects, filename: "arryDashboardTableObjects.json")
                     self.tblDashboard.reloadData() // Reloads table view
                     sender.endRefreshing()
+                    
+                    
+                    if self.userStore.arryDashboardTableObjects.count >= 2 && self.btnTblDashboardOptions == nil {
+                        self.setup_btnTblDashboardOptions()
+                    }
                     
                 case let .failure(error):
                     sender.endRefreshing() // Stop refreshing before showing alert
