@@ -17,13 +17,10 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
     var boolDashObjExists:Bool!
     var tblDashboard:UITableView?
     var refreshControlTblDashboard:UIRefreshControl?
-    //    var btnCheckDashTableObj = UIButton()
-    //    var lblDashboardTitle=UILabel()
     var lblDashboardTitle:UILabel?
-    var btnRefreshDashboard:UIButton?
-    //    var btnTblDashboardOptions:UIButton?
-    var btnDashboards:UIButton?
     var btnDashboardTitleInfo:UIButton?
+    var btnRefreshDashboard:UIButton?
+    var btnDashboards:UIButton?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,15 +62,18 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
             
             if btnRefreshDashboard != nil {
                 btnRefreshDashboard?.removeFromSuperview()
+                btnRefreshDashboard = nil
             }
         } else {
             if btnRefreshDashboard == nil {
                 self.setup_btnRefreshDashboard_isNil()
             }
             lblDashboardTitle?.removeFromSuperview()
+            btnDashboardTitleInfo?.removeFromSuperview()
             tblDashboard?.removeFromSuperview()
             btnDashboards?.removeFromSuperview()
             lblDashboardTitle = nil
+            btnDashboardTitleInfo = nil
             tblDashboard = nil
             btnDashboards = nil
         }
@@ -87,11 +87,32 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
         lblDashboardTitle!.font = UIFont(name: "ArialRoundedMTBold", size: 45)
         lblDashboardTitle!.numberOfLines = 0
         view.addSubview(lblDashboardTitle!)
+
+        
+        // Info button //
+        if let unwrapped_image = UIImage(named: "information") {
+            btnDashboardTitleInfo = UIButton()
+            btnDashboardTitleInfo!.accessibilityIdentifier="btnDashboardTitleInfo"
+            btnDashboardTitleInfo!.translatesAutoresizingMaskIntoConstraints=false
+            let small_image = unwrapped_image.scaleImage(toSize: CGSize(width: 10, height: 10))
+            btnDashboardTitleInfo!.setImage(small_image, for: .normal)
+            btnDashboardTitleInfo!.addTarget(self, action: #selector(self.touchDown(_:)), for: .touchDown)
+            btnDashboardTitleInfo!.addTarget(self, action: #selector(touchUpInside_btnDashboardTitleInfo(_:)), for: .touchUpInside)
+            self.view.addSubview(btnDashboardTitleInfo!)
+        }
+        
         NSLayoutConstraint.activate([
             lblDashboardTitle!.topAnchor.constraint(equalTo: vwTopBar.bottomAnchor, constant: heightFromPct(percent: 1)),
             lblDashboardTitle!.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 2)),
             lblDashboardTitle!.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -12)),
+            
+            btnDashboardTitleInfo!.leadingAnchor.constraint(equalTo: lblDashboardTitle!.trailingAnchor,constant: widthFromPct(percent: 0.5)),
+            btnDashboardTitleInfo!.centerYAnchor.constraint(equalTo: lblDashboardTitle!.centerYAnchor, constant: heightFromPct(percent: -2)),
+            
         ])
+        
+        
+        
     }
     func setup_lblDashboardTitle_isNotNil(){
         lblDashboardTitle!.text = userStore.currentDashboardObject?.dependentVarName ?? "No title"
@@ -178,6 +199,13 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
         ])
     }
     
+    
+
+
+    
+    
+    
+    
     /* Action Methods Obj C */
     
     @objc private func refresh_tblDashboardData(_ sender: UIRefreshControl){
@@ -211,6 +239,16 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
 
     }
 
+    @objc private func touchUpInside_btnDashboardTitleInfo(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+        let infoVC = InfoVC(dashboardTableObject: userStore.currentDashboardObject)
+        infoVC.modalPresentationStyle = .overCurrentContext
+        infoVC.modalTransitionStyle = .crossDissolve
+        self.present(infoVC, animated: true, completion: nil)
+    }
+        
     
     /* Action Methods */
     func update_arryDashboardTableObjects(){

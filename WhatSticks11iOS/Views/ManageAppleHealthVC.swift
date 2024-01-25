@@ -219,10 +219,11 @@ extension ManageAppleHealthVC{
             self.healthDataStore.sendChunksToWSAPI(userId:user_id,dateStringTimeStamp:dateStringTimeStamp ,arryAppleHealthData: arryQtyCatData) { responseResult in
                 self.removeSpinner()
                 switch responseResult{
-                case let .success(responseDict):
+                case .success(_):
                     self.strStatusMessage = self.strStatusMessage + "\n" + "2) Quantity and Category data sent successfully."
-                    self.templateAlert(alertTitle: "Success", alertMessage: self.strStatusMessage)
-                    self.templateAlert(alertTitle: "Processing Data", alertMessage:  responseDict["alertMessage"] ?? "<failed to get good message>")
+                    self.templateAlert(alertTitle: "Success!",alertMessage: "")
+//                    self.templateAlert(alertTitle: "Success", alertMessage: self.strStatusMessage)
+//                    self.templateAlert(alertTitle: "Processing Data", alertMessage:  responseDict["alertMessage"] ?? "<failed to get good message>")
 
                 case .failure(_):
                     self.strStatusMessage = self.strStatusMessage + "\n" + "2) Quantity and Category data NOT sent successfully."
