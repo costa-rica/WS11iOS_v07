@@ -266,15 +266,10 @@ class LoginVC: TemplateVC {
             print("* func setDashboardObject() checking: userStore.checkDashboardJson")
             DispatchQueue.main.async{
                 switch result{
-                case let .success(arryDashboardTableObjects):
-                    self.userStore.arryDashboardTableObjects = arryDashboardTableObjects
-                    
-                    self.userStore.currentDashboardObject = arryDashboardTableObjects[0]
-                    self.userStore.boolDashObjExists = true
+                case .success(_):
                     self.goToDashboard()
                 case let .failure(error):
                     self.userStore.boolDashObjExists=false
-
                     print("No arryDashboardTableObjects.json file found, error: \(error)")
                     self.goToDashboard()
                 }
@@ -284,10 +279,8 @@ class LoginVC: TemplateVC {
     
     func goToDashboard(){
         if swRememberMe.isOn{
-//                    self.userStore.writeUserJson()
             self.userStore.writeObjectToJsonFile(object: self.userStore.user, filename: "user.json")
         } else {
-//                    self.userStore.deleteUserJsonFile()
             self.userStore.deleteJsonFile(filename: "user.json")
             self.txtEmail.text = ""
             self.txtPassword.text = ""

@@ -31,7 +31,7 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
         self.lblUsername.text = userStore.user.username
         self.lblScreenName.text = "Dashboard"
         print("- in DashboardVC viewDidLoad -")
-        //        setup_btnGoToManageDataVC()
+        self.setup_btnGoToManageDataVC()
     }
     override func viewWillAppear(_ animated: Bool) {
         checkDashboardTableObjectNew()
@@ -52,20 +52,30 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
             if tblDashboard != nil {
                 setup_tblDashboard_isNotNil()
             }
-            if btnDashboards == nil {
-                setup_btnDashboards_isNil()
+            
+            if userStore.boolMultipleDashObjExist{
+                if btnDashboards == nil {
+                    setup_btnDashboards_isNil()
+                }
+                if btnDashboards != nil {
+                    setup_btnDashboards_isNotNil()
+                }
             }
-            if btnDashboards != nil {
-                setup_btnDashboards_isNotNil()
-            }
+            
+            
             if btnRefreshDashboard != nil {
                 btnRefreshDashboard?.removeFromSuperview()
             }
         } else {
-            print("create btnRefreshDashboard")
             if btnRefreshDashboard == nil {
-                print("setup_btnRefreshDashboard()")
+                self.setup_btnRefreshDashboard_isNil()
             }
+            lblDashboardTitle?.removeFromSuperview()
+            tblDashboard?.removeFromSuperview()
+            btnDashboards?.removeFromSuperview()
+            lblDashboardTitle = nil
+            tblDashboard = nil
+            btnDashboards = nil
         }
     }
     
@@ -84,7 +94,6 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
         ])
     }
     func setup_lblDashboardTitle_isNotNil(){
-        print("This is lblDashboardTitle not nil")
         lblDashboardTitle!.text = userStore.currentDashboardObject?.dependentVarName ?? "No title"
     }
     
@@ -147,6 +156,25 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
         NSLayoutConstraint.activate([
             self.btnRefreshDashboard!.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             self.btnRefreshDashboard!.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 2)),
+            self.btnRefreshDashboard!.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -2)),
+        ])
+    }
+    
+    
+    func setup_btnGoToManageDataVC(){
+        
+        btnGoToManageDataVC.accessibilityIdentifier="btnGoToManageDataVC"
+        btnGoToManageDataVC.translatesAutoresizingMaskIntoConstraints=false
+        btnGoToManageDataVC.backgroundColor = .systemBlue
+        btnGoToManageDataVC.layer.cornerRadius = 10
+        btnGoToManageDataVC.setTitle(" Manage Data ", for: .normal)
+        btnGoToManageDataVC.addTarget(self, action: #selector(self.touchDown(_:)), for: .touchDown)
+        btnGoToManageDataVC.addTarget(self, action: #selector(touchUpInside_goToManageDataVC(_:)), for: .touchUpInside)
+        // vwFooter button Placement
+        view.addSubview(btnGoToManageDataVC)
+        NSLayoutConstraint.activate([
+        btnGoToManageDataVC.topAnchor.constraint(equalTo: vwFooter.topAnchor, constant: heightFromPct(percent: 2)),
+        btnGoToManageDataVC.trailingAnchor.constraint(equalTo: vwFooter.trailingAnchor, constant: widthFromPct(percent: -2)),
         ])
     }
     
@@ -173,6 +201,14 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
             sender.transform = .identity
         }, completion: nil)
         self.update_arryDashboardTableObjects()
+    }
+    
+    @objc func touchUpInside_goToManageDataVC(_ sender: UIButton) {
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
+            sender.transform = .identity
+        }, completion: nil)
+        performSegue(withIdentifier: "goToManageDataVC", sender: self)
+
     }
 
     
@@ -201,8 +237,6 @@ class DashboardVC: TemplateVC, SelectDashboardVCDelegate{
             }
         }
     }
-    
-    
     
     /* Protocol methods */
     func didSelectDashboard(currentDashboardObjPos:Int){
@@ -275,261 +309,3 @@ extension DashboardVC: UITableViewDataSource{
 protocol SelectDashboardVCDelegate{
     func didSelectDashboard(currentDashboardObjPos: Int)
 }
-
-
-//    /*------------ OLD  DashboardVC -------- */
-//
-//
-//    //    func dashboardTableObjectExists(){
-//    func checkDashboardTableObject(){
-//        if self.userStore.boolDashObjExists{
-//
-//            self.lblDashboardTitle.text = self.userStore.currentDashboardObject!.dependentVarName
-//            DispatchQueue.main.async {
-//                self.setup_lblDashboardTitle()
-//                self.btnDashboardTitleInfo = UIButton(type: .custom)
-//                self.setupInformationButton()
-//                if self.userStore.arryDashboardTableObjects.count >= 2 && self.btnTblDashboardOptions == nil {
-//                    self.setup_btnTblDashboardOptions()
-//                }
-//                self.tblDashboard = UITableView()
-//                self.setup_tbl()
-//                self.tblDashboard.delegate = self
-//                self.tblDashboard.dataSource = self
-//                self.tblDashboard.register(DashboardTableCell.self, forCellReuseIdentifier: "DashboardTableCell")
-//                self.tblDashboard.rowHeight = UITableView.automaticDimension
-//                self.tblDashboard.estimatedRowHeight = 100
-//                let refreshControl = UIRefreshControl()
-//                refreshControl.addTarget(self, action: #selector(self.refreshData(_:)), for: .valueChanged)
-//                self.tblDashboard.refreshControl = refreshControl
-//
-//                if let _ = self.btnRefreshDashboard{
-//                    self.btnRefreshDashboard.removeFromSuperview()
-//                }
-//
-//            }
-//        }else {
-//            self.setup_btnRefreshDashboard()
-//            if let _ = self.tblDashboard{
-//                self.tblDashboard.removeFromSuperview()
-//                self.lblDashboardTitle.removeFromSuperview()
-//                self.btnDashboardTitleInfo.removeFromSuperview()
-//            }
-//            print("No arryDashboardTableObjects.json file found")
-//        }
-//    }
-//    func setup_lblDashboardTitle(){
-//
-//        lblDashboardTitle.text = userStore.currentDashboardObject?.dependentVarName ?? "No title"
-//        lblDashboardTitle.font = UIFont(name: "ArialRoundedMTBold", size: 45)
-//        lblDashboardTitle.translatesAutoresizingMaskIntoConstraints = false
-//        lblDashboardTitle.accessibilityIdentifier="lblDashboardTitle"
-//        view.addSubview(lblDashboardTitle)
-//        lblDashboardTitle.topAnchor.constraint(equalTo: vwTopBar.bottomAnchor, constant: heightFromPct(percent: bodyTopPaddingPercentage/4)).isActive=true
-//        lblDashboardTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: bodySidePaddingPercentage)).isActive=true
-//    }
-//    private func setupInformationButton() {
-//        if let unwrapped_image = UIImage(named: "information") {
-//            let small_image = unwrapped_image.scaleImage(toSize: CGSize(width: 10, height: 10))
-//            // Set the image for the button
-//            btnDashboardTitleInfo.setImage(small_image, for: .normal)
-//            // Add action for button
-//            btnDashboardTitleInfo.addTarget(self, action: #selector(infoButtonTapped), for: .touchUpInside)
-//            // Add the button to the view
-//            self.view.addSubview(btnDashboardTitleInfo)
-//            btnDashboardTitleInfo.translatesAutoresizingMaskIntoConstraints=false
-//            btnDashboardTitleInfo.leadingAnchor.constraint(equalTo: lblDashboardTitle.trailingAnchor,constant: widthFromPct(percent: 0.5)).isActive=true
-//            btnDashboardTitleInfo.centerYAnchor.constraint(equalTo: lblDashboardTitle.centerYAnchor, constant: heightFromPct(percent: -2)).isActive=true
-//
-//        }
-//
-//    }
-//    @objc private func infoButtonTapped() {
-//        let infoVC = InfoVC(dashboardTableObject: userStore.currentDashboardObject)
-//        infoVC.modalPresentationStyle = .overCurrentContext
-//        infoVC.modalTransitionStyle = .crossDissolve
-//        self.present(infoVC, animated: true, completion: nil)
-//    }
-//    func setup_tbl(){
-//        tblDashboard.accessibilityIdentifier = "tblDashboard"
-//        tblDashboard.translatesAutoresizingMaskIntoConstraints=false
-//        view.addSubview(tblDashboard)
-//        tblDashboard.topAnchor.constraint(equalTo: lblDashboardTitle.bottomAnchor, constant: heightFromPct(percent: 2)).isActive=true
-//        tblDashboard.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive=true
-//        tblDashboard.bottomAnchor.constraint(equalTo: vwFooter.topAnchor).isActive=true
-//        tblDashboard.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive=true
-//        tblDashboard.translatesAutoresizingMaskIntoConstraints=false
-//    }
-//    func setup_btnGoToManageDataVC(){
-//        view.addSubview(btnGoToManageDataVC)
-//        btnGoToManageDataVC.translatesAutoresizingMaskIntoConstraints=false
-//        btnGoToManageDataVC.accessibilityIdentifier="btnGoToManageDataVC"
-//        btnGoToManageDataVC.addTarget(self, action: #selector(self.touchDown(_:)), for: .touchDown)
-//        btnGoToManageDataVC.addTarget(self, action: #selector(touchUpInside_goToManageDataVC(_:)), for: .touchUpInside)
-//        // vwFooter button Placement
-//        btnGoToManageDataVC.topAnchor.constraint(equalTo: vwFooter.topAnchor, constant: heightFromPct(percent: 2)).isActive=true
-//        btnGoToManageDataVC.trailingAnchor.constraint(equalTo: vwFooter.trailingAnchor, constant: widthFromPct(percent: -2)).isActive=true
-//        btnGoToManageDataVC.backgroundColor = .systemBlue
-//        btnGoToManageDataVC.layer.cornerRadius = 10
-//        btnGoToManageDataVC.setTitle(" Manage Data ", for: .normal)
-//    }
-//    @objc func touchUpInside_goToManageDataVC(_ sender: UIButton) {
-//        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
-//            sender.transform = .identity
-//        }, completion: nil)
-//        performSegue(withIdentifier: "goToManageDataVC", sender: self)
-//
-//    }
-//    func setup_btnTblDashboardOptions(){
-////        if userStore.arryDashboardTableObjects.count >= 2 {
-//            btnTblDashboardOptions = UIButton()
-//            guard let btnTblDashboardOptions = btnTblDashboardOptions else {return}
-//            view.addSubview(btnTblDashboardOptions)
-//            btnTblDashboardOptions.translatesAutoresizingMaskIntoConstraints=false
-//            btnTblDashboardOptions.accessibilityIdentifier="btnTblDashboardOptions"
-//            btnTblDashboardOptions.addTarget(self, action: #selector(self.touchDown(_:)), for: .touchDown)
-//            btnTblDashboardOptions.addTarget(self, action: #selector(touchUpInside_btnTblDashboardOptions(_:)), for: .touchUpInside)
-//            // vwFooter button Placement
-//            btnTblDashboardOptions.topAnchor.constraint(equalTo: vwFooter.topAnchor, constant: heightFromPct(percent: 2)).isActive=true
-//            btnTblDashboardOptions.leadingAnchor.constraint(equalTo: vwFooter.leadingAnchor, constant: widthFromPct(percent: 2)).isActive=true
-//            btnTblDashboardOptions.backgroundColor = .systemBlue
-//            btnTblDashboardOptions.layer.cornerRadius = 10
-//            btnTblDashboardOptions.setTitle(" Dashboards ", for: .normal)
-////        }
-//    }
-//    @objc func touchUpInside_btnTblDashboardOptions(_ sender: UIButton) {
-//        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
-//            sender.transform = .identity
-//        }, completion: nil)
-//        //        let selectDashboardVC = SelectDashboardVC(arryDashboardTableObject: userStore.arryDashboardTableObjects)
-//        let selectDashboardVC = SelectDashboardVC(userStore: userStore)
-//        selectDashboardVC.delegate = self
-//        selectDashboardVC.modalPresentationStyle = .overCurrentContext
-//        selectDashboardVC.modalTransitionStyle = .crossDissolve
-//        self.present(selectDashboardVC, animated: true, completion: nil)
-//    }
-//    func setup_btnRefreshDashboard(){
-//        btnRefreshDashboard = UIButton()
-//        view.addSubview(btnRefreshDashboard)
-//        btnRefreshDashboard.translatesAutoresizingMaskIntoConstraints=false
-//        btnRefreshDashboard.accessibilityIdentifier="btnRefreshDashboard"
-//        btnRefreshDashboard.addTarget(self, action: #selector(self.touchDown(_:)), for: .touchDown)
-//        btnRefreshDashboard.addTarget(self, action: #selector(touchUpInside_btnRefreshDashboard(_:)), for: .touchUpInside)
-//        // vwFooter button Placement
-//        btnRefreshDashboard.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive=true
-//        btnRefreshDashboard.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: widthFromPct(percent: -2)).isActive=true
-//        btnRefreshDashboard.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: widthFromPct(percent: 2)).isActive=true
-//        btnRefreshDashboard.backgroundColor = .systemGray
-//        btnRefreshDashboard.layer.cornerRadius = 10
-//        btnRefreshDashboard.setTitle(" Refresh Table ", for: .normal)
-//    }
-//
-//    @objc func touchUpInside_btnRefreshDashboard(_ sender: UIButton) {
-//        UIView.animate(withDuration: 0.2, delay: 0.0, options: [.curveEaseInOut], animations: {
-//            sender.transform = .identity
-//        }, completion: nil)
-//        print("*--- self.userStore.arryDashboardTableObjects ---*")
-//        if self.userStore.arryDashboardTableObjects.count > 0 {
-//            print("count: \(self.userStore.arryDashboardTableObjects.count)")
-//            print("0 dependentVarName: \(self.userStore.arryDashboardTableObjects[0].dependentVarName!)")
-//            print("1 dependentVarName: \(self.userStore.arryDashboardTableObjects[1].dependentVarName!)")
-//        }
-//        self.userStore.callSendDashboardTableObjects { responseResult in
-//            switch responseResult {
-//            case let .success(arryDashboardTableObjects):
-//                print("- DashboardVC userStore.callSendDashboardTableObjects received SUCCESSFUL response")
-//
-//                self.userStore.arryDashboardTableObjects = arryDashboardTableObjects
-//                if self.userStore.currentDashboardObjPos == nil {
-//                    self.userStore.currentDashboardObjPos = 0
-//                }
-//                self.userStore.currentDashboardObject = arryDashboardTableObjects[self.userStore.currentDashboardObjPos]
-//                self.userStore.boolDashObjExists = true
-//                self.userStore.writeObjectToJsonFile(object: arryDashboardTableObjects, filename: "arryDashboardTableObjects.json")
-//                self.checkDashboardTableObject()
-//
-//            case let .failure(error):
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                    if case UserStoreError.fileNotFound = error {
-//                        print("* file not found error *")
-//                        self.templateAlert(alertTitle: "", alertMessage: "No data exists. Go to Manage Data to add data for your dashboard.")
-//                    } else {
-//                        self.templateAlert(alertTitle: "Alert", alertMessage: "Failed to update data. Error: \(error)")
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    @objc private func refreshData(_ sender: UIRefreshControl) {
-//
-//        self.userStore.callSendDataSourceObjects { responseResult in
-//            switch responseResult{
-//            case let .success(arryDataSourceObjects):
-//                self.userStore.arryDataSourceObjects = arryDataSourceObjects
-//                self.userStore.writeObjectToJsonFile(object: arryDataSourceObjects, filename: "arryDataSourceObjects.json")
-//                //                self.refreshValuesInTable()
-//                self.refreshDashboardTableObjects(sender)
-//            case .failure(_):
-//                print("No new data")
-//                self.refreshDashboardTableObjects(sender)
-//            }
-//        }
-//    }
-//
-//    func refreshDashboardTableObjects(_ sender: UIRefreshControl){
-//        self.userStore.callSendDashboardTableObjects { responseResult in
-//            DispatchQueue.main.async {
-//                switch responseResult {
-//                case let .success(arryDashboardTableObjects):
-//                    print("- table updated")
-//                    self.userStore.arryDashboardTableObjects = arryDashboardTableObjects
-//                    self.userStore.writeObjectToJsonFile(object: arryDashboardTableObjects, filename: "arryDashboardTableObjects.json")
-//                    self.tblDashboard.reloadData() // Reloads table view
-//                    sender.endRefreshing()
-//
-//
-//                    if self.userStore.arryDashboardTableObjects.count >= 2 && self.btnTblDashboardOptions == nil {
-//                        self.setup_btnTblDashboardOptions()
-//                    }
-//
-//                case let .failure(error):
-//                    sender.endRefreshing() // Stop refreshing before showing alert
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                        if case UserStoreError.fileNotFound = error {
-//                            print("* file not found error *")
-//                            self.templateAlert(alertTitle: "Error", alertMessage: "Dashboard file not found")
-//                        } else {
-//                            print("* failed to arryDashboardTableObjects from API *")
-//                            self.templateAlert(alertTitle: "Alert", alertMessage: "Failed to update data. Error: \(error)")
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    //    func didSelectDashboard(dashboard: DashboardTableObject) {
-//    func didSelectDashboard(currentDashboardObjPos:Int){
-//        DispatchQueue.main.async{
-//            self.userStore.currentDashboardObjPos = currentDashboardObjPos
-//            self.userStore.currentDashboardObject = self.userStore.arryDashboardTableObjects[currentDashboardObjPos]
-//            self.lblDashboardTitle.text = self.userStore.arryDashboardTableObjects[currentDashboardObjPos].dependentVarName
-//            print("DashboardVC has a new self.dashboardTableObject")
-//            print("self.dashboardTableObject: \(self.userStore.currentDashboardObject!.dependentVarName)")
-//            // Update your view accordingly
-//            self.tblDashboard.reloadData()
-//        }
-//    }
-//
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if (segue.identifier == "goToManageDataVC"){
-//            let manageDataVC = segue.destination as! ManageDataVC
-//            manageDataVC.userStore = self.userStore
-//            manageDataVC.appleHealthDataFetcher = self.appleHealthDataFetcher
-//            manageDataVC.healthDataStore = self.healthDataStore
-//            manageDataVC.requestStore = self.requestStore
-//
-//        }
-//
-//    }
