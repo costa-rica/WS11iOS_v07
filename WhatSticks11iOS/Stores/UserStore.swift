@@ -37,6 +37,7 @@ class UserStore {
     }
     var arryDataSourceObjects:[DataSourceObject]?
     var boolDashObjExists:Bool!
+    var boolMultipleDashObjExist:Bool!
     var arryDashboardTableObjects=[DashboardTableObject](){
         didSet{
             guard let unwp_pos = currentDashboardObjPos else {return}
@@ -164,19 +165,11 @@ class UserStore {
         }
     }
     // used in Login
-    func callSendDataSourceObjects(completion:@escaping (Result<[DataSourceObject],Error>) -> Void){
-        //        let request: URLRequest
-        //        if login{
-        //            request = requestStore.createRequestWithToken(endpoint: .send_login_health_data_objects)
-        //        }
-        //        else{
-        //            request = requestStore.createRequestWithToken(endpoint: .send_dashboard_health_data_objects)
-        //        }
+    func callSendDataSourceObjects(completion:@escaping (Result<Bool,Error>) -> Void){
         let request = requestStore.createRequestWithToken(endpoint: .send_data_source_objects)
         let task = requestStore.session.dataTask(with: request) { data, urlResponse, error in
             guard let unwrapped_data = data else {
                 OperationQueue.main.addOperation {
-                    
                     completion(.failure(UserStoreError.failedToRecieveServerResponse))
                 }
                 return
@@ -185,7 +178,8 @@ class UserStore {
                 let jsonDecoder = JSONDecoder()
                 let jsonDataSourceObj = try jsonDecoder.decode([DataSourceObject].self, from: unwrapped_data)
                 OperationQueue.main.addOperation {
-                    completion(.success(jsonDataSourceObj))
+                    self.writeObjectToJsonFile(object: jsonDataSourceObj, filename: "arryDataSourceObjects.json")
+                    completion(.success(true))
                 }
             } catch {
                 print("did not get expected response from WSAPI - probably no file for user")
@@ -239,7 +233,7 @@ class UserStore {
         }
         task.resume()
     }
-    func callSendDashboardTableObjects(completion: @escaping (Result<[DashboardTableObject], Error>) -> Void) {
+    func callSendDashboardTableObjects(completion: @escaping (Result<Bool, Error>) -> Void) {
         let request = requestStore.createRequestWithToken(endpoint: .send_dashboard_table_objects)
         let task = requestStore.session.dataTask(with: request) { data, urlResponse, error in
             // Check for network errors
@@ -265,8 +259,15 @@ class UserStore {
                         let jsonDecoder = JSONDecoder()
                         let jsonDashboardTableObj = try jsonDecoder.decode([DashboardTableObject].self, from: unwrappedData)
                         OperationQueue.main.addOperation {
-                            
-                            completion(.success(jsonDashboardTableObj))
+//                            self.arryDashboardTableObjects=jsonDashboardTableObj
+                            self.writeObjectToJsonFile(object: jsonDashboardTableObj, filename: "arryDashboardTableObjects.json")
+                            self.boolDashObjExists=true
+                            if self.arryDashboardTableObjects.count > 1 {
+                                self.boolMultipleDashObjExist = true
+                            } else {
+                                self.boolMultipleDashObjExist = false
+                            }
+                            completion(.success(true))
                         }
                     } catch {
                         OperationQueue.main.addOperation {
@@ -288,8 +289,6 @@ class UserStore {
         }
         task.resume()
     }
-
-    
 }
 
 // writing json files
@@ -307,7 +306,15 @@ extension UserStore{
         let jsonFileURL = self.documentsURL.appendingPathComponent(filename)
         do {
             try jsonData.write(to: jsonFileURL)
-            //        print("Successfully wrote \(filename)")
+            let jsonDecoder = JSONDecoder()
+            if filename == "arryDataSourceObjects.json"{
+                self.arryDataSourceObjects = try jsonDecoder.decode([DataSourceObject].self, from: jsonData)
+            }
+            if filename == "arryDashboardTableObjects.json"{
+                self.arryDashboardTableObjects = try jsonDecoder.decode([DashboardTableObject].self, from:jsonData)
+                self.currentDashboardObjPos = 0
+                self.currentDashboardObject = self.arryDashboardTableObjects[self.currentDashboardObjPos]
+            }
         } catch {
             print("Error writing to file: \(error)")
         }
@@ -352,6 +359,7 @@ extension UserStore{
         let userJsonFile = documentsURL.appendingPathComponent("arryDashboardTableObjects.json")
         guard fileManager.fileExists(atPath: userJsonFile.path) else {
             print("-in UserStore file not found -")
+            self.boolDashObjExists = false
             completion(.failure(UserStoreError.fileNotFound))
             return
         }
@@ -359,11 +367,12 @@ extension UserStore{
             let jsonData = try Data(contentsOf: userJsonFile)
             let decoder = JSONDecoder()
             self.arryDashboardTableObjects = try decoder.decode([DashboardTableObject].self, from:jsonData)
+            self.boolDashObjExists = true
         } catch {
             print("- failed to make userDict");
+            self.boolDashObjExists = false
             completion(.failure(UserStoreError.failedDecode))
         }
-        
         completion(.success(self.arryDashboardTableObjects))
         
     }

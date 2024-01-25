@@ -54,13 +54,12 @@ class ManageDataVC: TemplateVC, ManageDataVCDelegate{
     override func viewWillAppear(_ animated: Bool) {
         
         
-        
-        
         self.userStore.callSendDataSourceObjects { responseResult in
             switch responseResult{
-            case let .success(arryDataSourceObjects):
-                self.userStore.arryDataSourceObjects = arryDataSourceObjects
-                self.userStore.writeObjectToJsonFile(object: arryDataSourceObjects, filename: "arryDataSourceObjects.json")
+            case .success(_):
+                print("- Success: userStore.arryDataSourceObj populated")
+//                self.userStore.arryDataSourceObjects = arryDataSourceObjects
+//                self.userStore.writeObjectToJsonFile(object: arryDataSourceObjects, filename: "arryDataSourceObjects.json")
                 self.refreshValuesInTable()
                 self.refreshDashboardTableObjects()
             case .failure(_):
@@ -71,9 +70,8 @@ class ManageDataVC: TemplateVC, ManageDataVCDelegate{
     func refreshDashboardTableObjects(){
         self.userStore.callSendDashboardTableObjects { result in
             switch result{
-            case let .success(arryDashboardTableObjects):
-                self.userStore.arryDashboardTableObjects = arryDashboardTableObjects
-                self.userStore.writeObjectToJsonFile(object: arryDashboardTableObjects, filename: "arryDashboardTableObjects.json")
+            case .success(_):
+                print("- Success: userStore.arryDashboardTableObjects populated")
             case .failure(_):
                 print("no new DashboardTableObjects available yet.")
             }
@@ -92,10 +90,8 @@ class ManageDataVC: TemplateVC, ManageDataVCDelegate{
 
         self.userStore.callSendDataSourceObjects { responseResult in
             switch responseResult{
-            case let .success(arryDataSourceObjects):
-                print("> ManageDataVC -- case let .success(arryDataSourceObjects):")
-                self.userStore.arryDataSourceObjects = arryDataSourceObjects
-                self.userStore.writeObjectToJsonFile(object: arryDataSourceObjects, filename: "arryDataSourceObjects.json")
+            case .success(_):
+                print("- Success: userStore.arryDataSourceObj populated")
                 self.refreshValuesInTable()
                 self.refreshDashboardTableObjects()
             case let .failure(error):

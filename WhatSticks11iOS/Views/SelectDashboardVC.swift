@@ -77,8 +77,7 @@ class SelectDashboardVC: UIViewController, UIPickerViewDataSource, UIPickerViewD
     }
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         
-//        return arryDashboardTableObject?.count ?? 0
-        return userStore?.arryDataSourceObjects?.count ?? 0
+        return userStore?.arryDashboardTableObjects.count ?? 0
     }
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if (userStore?.arryDashboardTableObjects[row]) != nil {

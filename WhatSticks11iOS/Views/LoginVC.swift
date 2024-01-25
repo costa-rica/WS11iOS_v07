@@ -96,7 +96,7 @@ class LoginVC: TemplateVC {
             DispatchQueue.main.async{
                 switch result{
                 case .success(_):
-                    print("arryDashboardTableObjects.json file found")
+                    print("arryDashboardTableObjects.json file found and userStore.arryDashboardTableObjects set with \(self.userStore.arryDashboardTableObjects.count) dash objects")
                 case let .failure(error):
                     print("No arryDashboardTableObjects.json file found, error: \(error)")
                 }
@@ -294,12 +294,8 @@ class LoginVC: TemplateVC {
         }
         self.userStore.callSendDataSourceObjects { responseResult in
             switch responseResult{
-            case let .success(arryDataSourceObjects):
-                self.userStore.arryDataSourceObjects = arryDataSourceObjects
-//                        self.userStore.writeDataSourceJson()
-                self.userStore.writeObjectToJsonFile(object: arryDataSourceObjects, filename: "arryDataSourceObjects.json")
-//                        let dash_default = DashboardTableObject()
-
+            case .success(_):
+                print("- Success: userStore.arryDataSourceObj populated")
                 self.performSegue(withIdentifier: "goToDashboardVC", sender: self)
             case let .failure(error):
                 self.templateAlert(alertTitle: "Alert", alertMessage: "Login successful, but failed to get user dashboard data. Contact Nick at: nrodrig1@gmail.com. Error: \(error)")

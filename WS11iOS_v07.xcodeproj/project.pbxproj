@@ -33,6 +33,7 @@
 		010686042B5B1D8A00059498 /* ManageAppleHealthVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010685EA2B5B1D8A00059498 /* ManageAppleHealthVC.swift */; };
 		010686062B5B1D8A00059498 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010685EC2B5B1D8A00059498 /* SceneDelegate.swift */; };
 		010686092B5B2ACC00059498 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010686082B5B2ACB00059498 /* Config.swift */; };
+		01438AAE2B62B6C9002CEBE9 /* DashboardTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01438AAD2B62B6C9002CEBE9 /* DashboardTableCell.swift */; };
 		1023BA135744A28AAD7F3FD7 /* Pods_WS11iOS_v07.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 563EC104F564F9D6E481E052 /* Pods_WS11iOS_v07.framework */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 		010685EC2B5B1D8A00059498 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		010686072B5B23C400059498 /* WS11iOS_v07.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WS11iOS_v07.entitlements; path = WS11iOS_v07/WS11iOS_v07.entitlements; sourceTree = "<group>"; };
 		010686082B5B2ACB00059498 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		01438AAD2B62B6C9002CEBE9 /* DashboardTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardTableCell.swift; sourceTree = "<group>"; };
 		563EC104F564F9D6E481E052 /* Pods_WS11iOS_v07.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WS11iOS_v07.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA1FDA9E4C118353ECDFADFD /* Pods-WS11iOS_v07.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WS11iOS_v07.debug.xcconfig"; path = "Target Support Files/Pods-WS11iOS_v07/Pods-WS11iOS_v07.debug.xcconfig"; sourceTree = "<group>"; };
 		CC2F8F2E4D9D8BA4587AB95B /* Pods-WS11iOS_v07.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WS11iOS_v07.release.xcconfig"; path = "Target Support Files/Pods-WS11iOS_v07/Pods-WS11iOS_v07.release.xcconfig"; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 				010685E82B5B1D8A00059498 /* SelectDashboardVC.swift */,
 				010685E92B5B1D8A00059498 /* DashboardVC.swift */,
 				010685EA2B5B1D8A00059498 /* ManageAppleHealthVC.swift */,
+				01438AAD2B62B6C9002CEBE9 /* DashboardTableCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -319,6 +322,7 @@
 				010685F22B5B1D8A00059498 /* RequestStore.swift in Sources */,
 				010685FD2B5B1D8A00059498 /* RegisterVC.swift in Sources */,
 				010686032B5B1D8A00059498 /* DashboardVC.swift in Sources */,
+				01438AAE2B62B6C9002CEBE9 /* DashboardTableCell.swift in Sources */,
 				010686062B5B1D8A00059498 /* SceneDelegate.swift in Sources */,
 				010685FB2B5B1D8A00059498 /* AppDelegate.swift in Sources */,
 				010686092B5B2ACC00059498 /* Config.swift in Sources */,
