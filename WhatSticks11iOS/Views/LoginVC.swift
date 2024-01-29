@@ -339,7 +339,10 @@ class LoginVC: TemplateVC {
     }
     
     @objc private func forgotPasswordTapped() {
-        performSegue(withIdentifier: "goToForgotPasswordVC", sender: self)
+//        performSegue(withIdentifier: "goToForgotPasswordVC", sender: self)
+        print("go to website for forgot password")
+        guard let url = URL(string: "https://what-sticks.com/reset_password") else { return }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
     private func setupSignUpLabel() {
         let fullText = "Don’t have an account? Sign up"
