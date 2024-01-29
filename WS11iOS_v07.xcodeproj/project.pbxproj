@@ -202,6 +202,7 @@
 				010685B12B5B1D3300059498 /* Frameworks */,
 				010685B22B5B1D3300059498 /* Resources */,
 				EE411B94741AA27C36B61A88 /* [CP] Embed Pods Frameworks */,
+				01B005AB2B63005700D59A16 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -261,6 +262,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		01B005AB2B63005700D59A16 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# Path to the plist\ninfoPlist=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n\n# Fetch the encryption code from Config.swift\nencryptionCodeValue=$(awk '/static let ITSEncryptionExportComplianceCode =/ { print $NF }' ${SRCROOT}/Config.swift | tr -d '\"')\n\n# Replace the placeholder in the plist\nif [ ! -z \"$encryptionCodeValue\" ]; then\n    /usr/libexec/PlistBuddy -c \"Set :ITSEncryptionExportComplianceCode $encryptionCodeValue\" \"$infoPlist\"\nfi\n";
+		};
 		BF3A960F7792AF479655F76E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
