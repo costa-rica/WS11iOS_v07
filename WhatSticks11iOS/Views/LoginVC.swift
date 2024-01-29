@@ -73,7 +73,7 @@ class LoginVC: TemplateVC {
         if let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.path {
             print("Documents Directory: \(documentsPath)")
         }
-        setup_stckVwDevOrProd()
+//        setup_stckVwDevOrProd()
     }
     override func viewWillAppear(_ animated: Bool) {
         self.isInitialViewController=true
